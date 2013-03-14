@@ -8,6 +8,13 @@
   "license": "BSD",
   "dependencies": {
     "ws": "~0.4.25",
-    "express": "~3.1.0"
+    "express": "~3.1.0",
+    "async": "~0.2.6",
+    "streamers": "~0.1.1",
+    "request": "~2.16.2",
+    "murmurhash": "0.0.2"
+  },
+  "engines": {
+    "node": ">=0.10"
   }
 }
