@@ -39,7 +39,7 @@
     var data = localStorage[key];
     var source = event.source;
     
-    var message = {name: 'getData', data: data, url: key};
+    var message = {name: 'data', data: data, url: key};
        
     source.postMessage(message, "*");
   }
