@@ -2,7 +2,7 @@
 <body>
 <script>
   window.addEventListener("message", function receiveMessage(event) {
-    console.log('got a message');
+    log('Received event', event.data);
     switch (event.data.name) {
       case 'store':
         storeData(event);
@@ -13,6 +13,8 @@
       case 'getData':
         getData(event);
         break;
+      case 'delete':
+        deleteData(event);
       default:
         // All bad
     };
@@ -28,13 +30,9 @@
     var key = event.data.url;
     var data = event.data.data;
     localStorage[key] = data;
-    
-    console.log('storing!');
   }
   
   function getData(event){
-    
-    console.log("fetching");
     var key = event.data.url;
     var data = localStorage[key];
     var source = event.source;
@@ -47,18 +45,17 @@
   function deleteAll(){
     localStorage.clear();
   }
-  /*
+  
   function deleteData(event){
     var key = event.data.url;
-    localStorage[key] = '';
     localStorage.removeItem(key);
-    
-    var message = {};
-    
-    message.name = "deleteData";
-    message.success = true;
-    event.source.postMessage(message, "*");
-  }*/
+  }
+  
+  function log() {
+    var copy = Array.prototype.slice.call(arguments);
+    copy.unshift(window.location.host + ': ');
+    console.log.apply(console, copy);
+  }
   
 </script>
 </body>
