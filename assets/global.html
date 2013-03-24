@@ -5,19 +5,18 @@
     window.addEventListener("message", function receiveMessage(event) {
       log('Received event', event.data);
       switch (event.data.name) {
-        case 'store':
-          storeData(event);
-          break;
         case 'deleteAll':
           deleteAll();
           break;
-        case 'getData':
-          getData(event);
-          break;
         case 'delete':
           deleteData(event);
+          break;
         case 'request':
           requestUrl(event);
+          break;
+        case 'derequest':
+          deRequestUrl(event);
+          break;
         default:
           // All bad
       };
@@ -34,22 +33,7 @@
     
     var _stores = ['http://a.poop:8000/iframe.html', 'http://b.poop:8000/iframe.html', 'http://c.poop:8000/iframe.html'];
     
-    function storeData(event){
-      var key = event.data.url;
-      var data = event.data.data;
-      localStorage[key] = data;
-    }
-    
-    function getData(event){
-      var key = event.data.url;
-      var data = localStorage[key];
-      var source = event.source;
-      
-      var message = {name: 'data', data: data, url: key};
-         
-      source.postMessage(message, "*");
-    }
-    
+
     function deleteAll(){
       localStorage.clear();
     }
@@ -59,6 +43,15 @@
       localStorage.removeItem(key);
     }
     
+    function deRequestUrl(event) {
+      var size = event.data.size;
+      var url = event.data.url;
+      var cur = _directory.getItem(url);
+      if (cur) {
+        _directory.setItem(url, parseInt(cur, 10) - size);
+      }
+    }
+    
     function requestUrl(event) {
       var size = event.data.size;
       var source = event.source;
@@ -66,16 +59,14 @@
       var message = {name: 'available-url', clear: false, url: null, id: event.data.id};
      
       for(var i = 0; i < _stores.length; i++){
-        var currentSize;
-         
-        if ((currentSize = _directory.getItem(_stores[i])) == null){
+        var currentSize = _directory.getItem(_stores[i]);
+        if (currentSize === null){
           _directory.setItem(_stores[i], size);
           // Clear the select frame
           message.clear = true;
           message.url = _stores[i];
           break;
-          return;
-        } else if (currentSize + size <= _MAXSIZE){
+        } else if ((currentSize = parseInt(currentSize, 10)) + size <= _MAXSIZE){
           _directory.setItem(_stores[i], size + currentSize);
           message.url = _stores[i];
           break;
