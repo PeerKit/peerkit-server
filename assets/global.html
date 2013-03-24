@@ -16,6 +16,8 @@
           break;
         case 'delete':
           deleteData(event);
+        case 'request':
+          requestUrl(event);
         default:
           // All bad
       };
@@ -26,6 +28,11 @@
       window.parent.postMessage(message,'*');
     };
 
+    var _MAXSIZE = (navigator.userAgent.indexOf("Opera") == -1) ? 5242880 : 2097152;
+    
+    var _directory = window.localStorage;
+    
+    var _stores = ['http://a.poop:8000/iframe.html', 'http://b.poop:8000/iframe.html', 'http://c.poop:8000/iframe.html'];
     
     function storeData(event){
       var key = event.data.url;
@@ -52,13 +59,37 @@
       localStorage.removeItem(key);
     }
     
+    function requestUrl(event) {
+      var size = event.data.size;
+      var source = event.source;
+      
+      var message = {name: 'available-url', clear: false, url: null, id: event.data.id};
+     
+      for(var i = 0; i < _stores.length; i++){
+        var currentSize;
+         
+        if ((currentSize = _directory.getItem(_stores[i])) == null){
+          _directory.setItem(_stores[i], size);
+          // Clear the select frame
+          message.clear = true;
+          message.url = _stores[i];
+          break;
+          return;
+        } else if (currentSize + size <= _MAXSIZE){
+          _directory.setItem(_stores[i], size + currentSize);
+          message.url = _stores[i];
+          break;
+        }
+      }
+      source.postMessage(message, "*")
+    }
+    
     function log() {
       var copy = Array.prototype.slice.call(arguments);
       copy.unshift(window.location.host + ': ');
       console.log.apply(console, copy);
     }
-    
-  })();
+  })(); 
 </script>
 </body>
 </html>
