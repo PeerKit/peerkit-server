@@ -1,5 +1,5 @@
 {
-  "name": "peerkit-server",
+  "name": "peercdn-server",
   "version": "0.0.0",
   "main": "index.js",
   "scripts": {
