@@ -1,5 +1,7 @@
 # PeerKit Server
 
+PeerKit is under heavy development. We don't recommend trying to run it yourself yet.
+
 
 Installing:
 
